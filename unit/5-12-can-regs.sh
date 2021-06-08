@@ -48,9 +48,13 @@ CAN_ERR_CNT	0x0034	错误计数寄存器
 CAN_FIFO_CNT	0x0038	FIFO计数寄存器
 
 CAN_DMA_CTRL	0x003c	DMA请求控制寄存器
+"
 
+offset_table1="
 CAN_TX_FIFO	0x100~0x1FF	发送FIFO影子寄存器
+"
 
+offset_table2="
 CAN_RX_FIFO	0x200~0x2FF	接收FIFO影子寄存器
 "
 
@@ -70,4 +74,26 @@ do
 		echo -e "寄存器地址:$baseaddr+$reg_offset\t\t$reg_name\t$reg_desc"
 		busybox devmem $addr
 	done
+        for ((reg_offset=0x100;reg_offset<=0x1FF;reg_offset+=4))
+        do
+                reg_desc=`echo $offset_table1 | awk -F ' ' '{print $1}'`
+                reg_name=`echo $offset_table1 | awk -F ' ' '{print $3}'`
+
+                reg_offset=$reg_offset
+                addr=$(($baseaddr + $reg_offset))
+
+                echo -e "寄存器地址:$baseaddr+$reg_offset\t\t$reg_name\t$reg_desc"
+                busybox devmem $addr
+        done
+        for ((reg_offset=0x200;reg_offset<=0x2FF;reg_offset+=4))
+        do
+                reg_desc=`echo $offset_table2 | awk -F ' ' '{print $1}'`
+                reg_name=`echo $offset_table2 | awk -F ' ' '{print $3}'`
+
+                reg_offset=$reg_offset
+                addr=$(($baseaddr + $reg_offset))
+
+                echo -e "寄存器地址:$baseaddr+$reg_offset\t\t$reg_name\t$reg_desc"
+                busybox devmem $addr
+        done
 done
